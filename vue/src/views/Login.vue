@@ -31,7 +31,12 @@
           欢迎登录后台管理系统
         </div>
         <el-form-item label="账号:" prop="username">
-          <el-input placeholder="请输入账号" prefix-icon="el-icon-user" size="medium" v-model="user.username"></el-input>
+          <el-input
+            placeholder="请输入账号"
+            prefix-icon="el-icon-user"
+            size="medium"
+            v-model="user.username"
+          ></el-input>
         </el-form-item>
         <el-form-item label="密码:" prop="password">
           <el-input
@@ -47,11 +52,34 @@
         <div style="align-items: center">
           <el-form-item>
             <el-button size="big" type="primary" @click="login">登录</el-button>
-            <el-button size="big" type="success" @click="$router.push('/register')">注册</el-button>
+            <el-button
+              size="big"
+              type="success"
+              @click="$router.push('/register')"
+              >注册</el-button
+            >
           </el-form-item>
+        </div>
+        <div style="text-align: right">
+          <el-button type="text" @click="forgetPassword">忘记密码</el-button>
         </div>
       </el-form>
     </div>
+
+    <el-dialog title="忘记密码" :visible.sync="formVisible" :before-close="handleClose">
+      <el-form label-width="100px" :model="userForm">
+        <el-form-item label="用户名:">
+          <el-input v-model="userForm.username"></el-input>
+        </el-form-item>
+        <el-form-item label="手机号:">
+          <el-input v-model="userForm.phone"></el-input>
+        </el-form-item>
+        <div style="text-align: center">
+          <el-button type="danger" @click="handleReset">确认重置</el-button>
+          <el-button type="primary" @click="handleCancel">取消</el-button>
+        </div>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
@@ -73,6 +101,8 @@ export default {
       }
     };
     return {
+      userForm: {},
+      formVisible: false,
       code: "", //验证码组件传递过来的code
       user: {
         code: "", // 用户输入的code验证码
@@ -82,19 +112,38 @@ export default {
       rules: {
         username: [{ required: true, message: "账号不为空", trigger: "blur" }],
         password: [{ required: true, message: "密码不为空", trigger: "blur" }],
-        code: [{ validator: validateCode, trigger: "blur" }]
-      }
+        code: [{ validator: validateCode, trigger: "blur" }],
+      },
     };
   },
-  created() {
-    
-  },
+  created() {},
   methods: {
+    handleReset() {
+      this.$request.put('/password',this.userForm).then(res=>{
+        if(res.code==='200'){
+          this.$message.success('重置成功')
+          this.formVisible=false
+        }else{
+          this.$message.error(res.msg)
+        }
+      })
+    },
+    handleClose() {
+      this.userForm = {};
+      this.formVisible=false
+    },
+    handleCancel() {
+      this.userForm = {};
+      this.formVisible = false;
+    },
+    forgetPassword() {
+      this.formVisible = true;
+    },
     getCode(code) {
       this.code = code.toLowerCase();
     },
     login() {
-      this.$refs['loginRef'].validate((valid) => {
+      this.$refs["loginRef"].validate((valid) => {
         if (valid) {
           //success
           this.$request.post("/login", this.user).then((res) => {
