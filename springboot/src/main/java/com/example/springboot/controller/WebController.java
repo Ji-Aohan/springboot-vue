@@ -45,4 +45,14 @@ public class WebController {
         user = userService.register(user);
         return Result.success(user);
     }
+
+    @AuthAccess
+    @PutMapping("/password")
+    public Result password(@RequestBody User user) {
+        if (StrUtil.isBlank(user.getUsername()) || StrUtil.isBlank(user.getPhone())) {
+            return Result.error("数据不能为空");
+        }
+        userService.resetPassword(user);
+        return Result.success();
+    }
 }

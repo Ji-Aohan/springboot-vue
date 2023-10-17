@@ -72,4 +72,16 @@ public class UserService {
         userMapper.insert(user);
         return user;
     }
+
+    public void resetPassword(User user) {
+        User dbuser = userMapper.selectByUsername(user.getUsername());
+        if (dbuser == null) {
+            throw new ServiceException("用户不存在");
+        }
+        if (!dbuser.getPhone().equals(user.getPhone())) {
+            throw new ServiceException("手机号验证错误");
+        }
+        dbuser.setPassword("123456");   //默认密码
+        userMapper.updateUser(dbuser);
+    }
 }
