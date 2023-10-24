@@ -3,15 +3,13 @@ package com.example.springboot.service;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.example.springboot.exception.ServiceException;
 import com.example.springboot.entity.User;
+import com.example.springboot.exception.ServiceException;
 import com.example.springboot.mapper.UserMapper;
 import com.example.springboot.utils.TokenUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * @author Ji_ah

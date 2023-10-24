@@ -25,6 +25,15 @@
     <div style="margin-top: 10px">
       <el-button type="primary" @click="handleAdd">新增</el-button>
       <el-button type="danger" @click="handleBatchDel">批量删除</el-button>
+      <el-button type="info" @click="handleExport">导出</el-button>
+      <el-upload style="display: inline; margin-left: 10px;"
+            class="avatar-uploader"
+            action="http://localhost:9090/user/import"
+            :headers="{ token: user.token }"
+            :show-file-list="false"
+          >
+      <el-button type="primary" @click="handleImport">导入</el-button>
+      </el-upload>
     </div>
     <el-table :data="userData" @selection-change="handleSelectionChange">
       <el-table-column type="selection"> </el-table-column>
@@ -141,6 +150,35 @@ export default {
     this.load();
   },
   methods: {
+    handleExport() {
+      if (!this.ids.length) {
+        //没有复选框选择
+        window.open(
+          "http://localhost:9090/user/export?token=" +
+            this.user.token +
+            "&username=" +
+            this.username +
+            "&name=" +
+            this.name
+        );
+      } else {
+        let idsStr = this.ids.join(",");
+        window.open(
+          "http://localhost:9090/user/export?token=" +
+            this.user.token +
+            "&ids=" +
+            idsStr
+        );
+      }
+    },
+    handleImport(res,file,fileList) {
+      if(res.code==='200'){
+        this.$message.success('导入成功')
+        this.load(1)
+      }else{
+        this.$message.error(res.msg)
+      }
+    },
     handleSelectionChange(rows) {
       this.ids = rows.map((v) => v.id);
       console.log(this.ids);
